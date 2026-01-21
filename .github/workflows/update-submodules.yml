@@ -14,8 +14,8 @@ jobs:
       - name: Sync submodule URLs and update pointers
         run: |
           git submodule deinit --all -f  # 清理旧缓存
-      #    git submodule sync --recursive  # 同步新 URL 到本地配置
-      #    git submodule update --init --recursive --remote  # 拉取新地址子模块并更新指针
+          git submodule sync --recursive  # 同步新 URL 到本地配置
+          git submodule update --init --recursive --remote  # 拉取新地址子模块并更新指针
       - name: Commit submodule changes
         run: |
           git config --global user.name "github-actions[bot]"
