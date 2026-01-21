@@ -1,0 +1,25 @@
+name: Update Submodules Automatically
+on:
+  push:
+    paths:
+      - ".gitmodules"  # 当 .gitmodules 被修改时触发
+jobs:
+  update-submodules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.GITHUB_TOKEN }}  # 自动获取，无需手动配置
+      - name: Sync submodule URLs and update pointers
+        run: |
+          git submodule deinit --all -f  # 清理旧缓存
+          git submodule sync --recursive  # 同步新 URL 到本地配置
+          git submodule update --init --recursive --remote  # 拉取新地址子模块并更新指针
+      - name: Commit submodule changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .  # 暂存子模块指针更新
+          git commit -m "Update submodule pointers to latest commits" || echo "No changes to commit"
+          git push  # 推送更新到主仓库
